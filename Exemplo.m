@@ -377,11 +377,24 @@ semilogy(condi);
 
 teste = transpose(teste);
 
-Y = runMLP(teste,Wx,Wy);
+
+[p1 N] = size (teste);
+
+bias = -1;
+
+teste = [bias*ones(1,N) ; teste];
+
+V = Wx*teste;
+Z = 1./(1+exp(-V));
+
+S = [bias*ones(1,N);Z];
+G = Wy*S;
+
+Y = 1./(1+exp(-G));
+
 Y = transpose(Y);
 
-result = Y >= 0.5;
-D = transpose(D);
+result = Y >= 0.5
 
 
 
