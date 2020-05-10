@@ -338,22 +338,25 @@ Z = 1./(1+exp(-Wx*X));%Saida dos neuroios da camada escondida
 
 S = [bias*ones(1,N);Z];%cria matrix de saida da camada escondida juntando o bias com a saida
 
-Y = 1./(1+exp(-Wy*S));%Saida dos neuroios da camada de saida
+G = Wy*S;% multiplica pelos pesos
+
+Y = 1./(1+exp(-Wy*S)); %funcao ativacao
 
 E = D - Y; % erro desejado - calculado
 
-mse = immse(D,Y); %calcula o erro
-MSETemp(i) = mse;
+mse = immse(D,Y);
+
 condicao = abs(mse - MSEAnt);
 condi(i) = condicao;
+
 if (condicao < MSETarget) %se o eqm for menor que o erro admitido
     break;
 end
-
 MSEAnt = mse;
  
 df = Y.*(1-Y); %derivada da saida do neuronio de saida 
 dGy = df .* E; %derivada do gradiente = derivada da saida calculada * Erro
+
 DWy = mu/N * dGy*S';
 Ty = Wy;
 Wy = Wy + DWy;
@@ -372,11 +375,10 @@ end
 
 disp(['epoch = ' num2str(i) ' mse = ' num2str(condicao)]);
 
-figure(1);
-semilogy(condi, 'b');
-hold on
-semilogy(MSETemp,'r');
-legend('modulo da diferenca do erro)','erro')
+
+semilogy(condi);
+
+
 
 %TESTE DA REDE
 teste = transpose(teste);
