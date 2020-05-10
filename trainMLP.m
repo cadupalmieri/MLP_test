@@ -49,8 +49,8 @@ D = D(:,k);
 V = Wx*X;
 Z = 1./(1+exp(-V));%funcao ativacao
 
-S = [bias*ones(1,N);Z];
-G = Wy*S;
+S = [bias*ones(1,N);Z];%junta o bias com a resposta da camada escondida pro proximo passo
+G = Wy*S;%Multiplica pelos pesos
 
 Y = 1./(1+exp(-G)); %funcao ativacao
 
