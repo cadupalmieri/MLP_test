@@ -17,7 +17,7 @@ mu = 0.1;
 epochMax = 200000;
 MSETarget = 1e-6;
 
-% x1(teta) x2     x3     x4  x5     
+% x1      x2      x3       x4    
 X = [
 0.3841	0.2021	0.0000	0.2438	;
 0.1765	0.1613	0.3401	0.0843	;
@@ -151,7 +151,7 @@ X = [
 0.3832	0.2321	0.0341	0.2450	];
 X = transpose(X);
  
-
+%y1 y2 y3
 D = [
 1	0	0	;
 1	0	0	;
@@ -284,6 +284,7 @@ D = [
 1	0	0	;
 1	0	0	];
 
+%  x1      x2      x3     x4
 teste = [
 0.8622	0.7101	0.6236	0.7894	;
 0.2741	0.1552	0.1333	0.1516	;
@@ -324,7 +325,6 @@ DWx = zeros(H,p+1);
 MSETemp = zeros(1,epochMax);
 MSEAnt = 0;
 mse =0;
-
 
 %TREINO DA REDE
 for i=1:epochMax
@@ -381,19 +381,15 @@ legend('modulo da diferenca do erro)','erro')
 %TESTE DA REDE
 teste = transpose(teste);
 
+[p1 N] = size(teste);
 
-[p1 N] = size (teste);
+teste = [-1*ones(1,N); teste];
 
-
-teste = [-1*ones(1,N) ; teste];
-
-V = Wx*teste;
-Z = 1./(1+exp(-V));
+Z = 1./(1+exp(-Wx*teste));
 
 S = [-1*ones(1,N);Z];
-G = Wy*S;
 
-Y = 1./(1+exp(-G));
+Y = 1./(1+exp(-Wy*S));
 
 Y = transpose(Y);
 

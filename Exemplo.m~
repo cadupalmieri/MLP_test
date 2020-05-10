@@ -17,7 +17,7 @@ mu = 0.1;
 epochMax = 200000;
 MSETarget = 1e-6;
 
-% x1(teta) x2     x3     x4  x5     
+% x1       x2     x3     x4    
 X = [
 0.3841	0.2021	0.0000	0.2438	;
 0.1765	0.1613	0.3401	0.0843	;
@@ -338,25 +338,22 @@ Z = 1./(1+exp(-Wx*X));%Saida dos neuroios da camada escondida
 
 S = [bias*ones(1,N);Z];%cria matrix de saida da camada escondida juntando o bias com a saida
 
-G = Wy*S;% multiplica pelos pesos
-
-Y = 1./(1+exp(-Wy*S)); %funcao ativacao
+Y = 1./(1+exp(-Wy*S));%Saida dos neuroios da camada de saida
 
 E = D - Y; % erro desejado - calculado
 
-mse = immse(D,Y);
-
+mse = immse(D,Y); %calcula o erro
+MSETemp(i) = mse;
 condicao = abs(mse - MSEAnt);
 condi(i) = condicao;
-
 if (condicao < MSETarget) %se o eqm for menor que o erro admitido
     break;
 end
+
 MSEAnt = mse;
  
 df = Y.*(1-Y); %derivada da saida do neuronio de saida 
 dGy = df .* E; %derivada do gradiente = derivada da saida calculada * Erro
-
 DWy = mu/N * dGy*S';
 Ty = Wy;
 Wy = Wy + DWy;
@@ -375,27 +372,24 @@ end
 
 disp(['epoch = ' num2str(i) ' mse = ' num2str(condicao)]);
 
-
-semilogy(condi);
-
-
+figure(1);
+semilogy(condi, 'b');
+hold on
+semilogy(MSETemp,'r');
+legend('modulo da diferenca do erro)','erro')
 
 %TESTE DA REDE
 teste = transpose(teste);
 
+[p1 N] = size(teste);
 
-[p1 N] = size (teste);
+teste = [-1*ones(1,N); teste];
 
-
-teste = [-1*ones(1,N) ; teste];
-
-V = Wx*teste;
-Z = 1./(1+exp(-V));
+Z = 1./(1+exp(-Wx*teste));
 
 S = [-1*ones(1,N);Z];
-G = Wy*S;
 
-Y = 1./(1+exp(-G));
+Y = 1./(1+exp(-Wy*S));
 
 Y = transpose(Y);
 
