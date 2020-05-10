@@ -14,8 +14,8 @@ m = 3;
 
 mu = 0.1;
 
-epoch = 2000;
-MSEmin = 1e-6;
+epochMax = 200000;
+MSETarget = 1e-6;
 
 % x1(teta) x2     x3     x4  x5     
 X = [
@@ -306,9 +306,74 @@ teste = [
 
 D = transpose(D);
 
-[Wx,Wy,MSE]=trainMLP(p,H,m,mu,X,D,epoch,MSEmin);
+[p1 N] = size(X);
+bias = -1;
 
-semilogy(MSE);
+X = [bias*ones(1,N) ; X]; %Pega o vetor de entrada e adiciona a primeira coluna com o bias -1
+
+Wx = rand(H,p+1); %gera matriz de pesos entre entrada e camada escondida randomica com 15 linhas e 5 colunas
+WxAnt = zeros(H,p+1);%gera matriz de mesmo tamanho com zeros para armazenar valor da iteracao anterior
+Tx = zeros(H,p+1);%variavel temporaria pra armazenar os pesos
+
+Wy = rand(m,H+1); %gera matriz de pesos entre camada escondida e saida randomica com 3 linhas e 16 colunas
+WyAnt = zeros(m,H+1);%gera matriz de mesmo tamanho com zeros para armazenar valor da iteracao anterior
+Ty = zeros(m,H+1);%variavel temporaria pra armazenar os pesos
+
+DWy = zeros(m,H+1);
+DWx = zeros(H,p+1);
+MSETemp = zeros(1,epochMax);
+MSEAnt = 0;
+mse =0;
+
+for i=1:epochMax
+
+k = 1:130;
+X = X(:,k);
+D = D(:,k);
+
+V = Wx*X;
+Z = 1./(1+exp(-V));%funcao ativacao
+
+S = [bias*ones(1,N);Z];%cria matrix de saida da mada intermediaria juntando o bias com a saida
+G = Wy*S;% multiplica pelos pesos
+
+Y = 1./(1+exp(-G)); %funcao ativacao
+
+E = D - Y; % erro desejado - calculado
+
+mse = immse(D,Y);
+
+condicao = abs(mse - MSEAnt);
+condi(i) = condicao;
+
+if (condicao < MSETarget) %se o eqm for menor que o erro admitido
+    break;
+end
+MSEAnt = mse;
+ 
+df = Y.*(1-Y); %derivada da saida do neuronio de saida 
+dGy = df .* E; %derivada do gradiente = derivada da saida calculada * Erro
+
+DWy = mu/N * dGy*S';
+Ty = Wy;
+Wy = Wy + DWy;
+WyAnt = Ty;
+
+df= S.*(1-S); %derivada da saida do neuronio escondidos
+
+dGx = df .* (Wy' * dGy);
+dGx = dGx(2:end,:);
+DWx = mu/N* dGx*X';
+Tx = Wx;
+Wx = Wx + DWx;
+WxAnt = Tx;
+
+end
+
+disp(['epoch = ' num2str(i) ' mse = ' num2str(condicao)]);
+
+
+semilogy(condi);
 
 teste = transpose(teste);
 

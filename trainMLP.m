@@ -1,5 +1,5 @@
 function [Wx,Wy,MSE]=trainMLP(p,H,m,mu,X,D,epochMax,MSETarget)
-% The matrix implementation of the Backpropagation algorithm for two-layer
+%clear all; The matrix implementation of the Backpropagation algorithm for two-layer
 % Multilayer Perceptron (MLP) neural networks.
 %
 % Author: Marcelo Augusto Costa Fernandes
@@ -42,7 +42,8 @@ MSETemp = zeros(1,epochMax);
 
 for i=1:epochMax
     
-k = randperm(N);
+k = randperm(N)
+
 X = X(:,k);
 D = D(:,k);
 
