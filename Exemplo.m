@@ -377,17 +377,15 @@ semilogy(condi);
 
 teste = transpose(teste);
 
-
 [p1 N] = size (teste);
 
-bias = -1;
 
-teste = [bias*ones(1,N) ; teste];
+teste = [-1*ones(1,N) ; teste];
 
 V = Wx*teste;
 Z = 1./(1+exp(-V));
 
-S = [bias*ones(1,N);Z];
+S = [-1*ones(1,N);Z];
 G = Wy*S;
 
 Y = 1./(1+exp(-G));
