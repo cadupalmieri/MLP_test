@@ -14,7 +14,7 @@ m = 3;
 
 mu = 0.1;
 
-epoch = 100000;
+epoch = 2000;
 MSEmin = 1e-6;
 
 % x1(teta) x2     x3     x4  x5     

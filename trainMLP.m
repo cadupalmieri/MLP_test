@@ -49,23 +49,22 @@ D = D(:,k);
 V = Wx*X;
 Z = 1./(1+exp(-V));%funcao ativacao
 
-S = [bias*ones(1,N);Z];%junta o bias com a resposta da camada escondida pro proximo passo
-G = Wy*S;%Multiplica pelos pesos
+S = [bias*ones(1,N);Z];%cria matrix de saida da mada intermediaria juntando o bias com a saida
+G = Wy*S;% multiplica pelos pesos
 
 Y = 1./(1+exp(-G)); %funcao ativacao
 
 E = D - Y; % erro desejado - calculado
 
-mse = mean(mean(E.^2)); %faz o erro quadradico m?dio
+%mse = mean(mean(E.^2)); %faz o erro quadradico m?dio
+mse = immse(D,Y);
 MSETemp(i) = mse;
-
 if (mse < MSETarget) %se o eqm for menor que o erro admitido
     MSE = MSETemp(1:i); % pega o valor do erro temporario e encerra o for
     return
 end
  
-
-df = Y.*(1-Y); %derivada da saida calculada
+df = Y.*(1-Y); %derivada da saida do neuronio de saida 
 dGy = df .* E; %derivada do gradiente = derivada da saida calculada * Erro
 
 DWy = mu/N * dGy*S';
@@ -73,13 +72,13 @@ Ty = Wy;
 Wy = Wy + DWy;
 WyAnt = Ty;
 
-df= S.*(1-S);
+df= S.*(1-S); %derivada da saida do neuronio escondidos
 
 dGx = df .* (Wy' * dGy);
 dGx = dGx(2:end,:);
 DWx = mu/N* dGx*X';
 Tx = Wx;
-Wx = Wx + DWx ;
+Wx = Wx + DWx;
 WxAnt = Tx;
 end
 
