@@ -346,6 +346,7 @@ mse = immse(D,Y); %calcula o erro
 MSETemp(i) = mse;
 condicao = abs(mse - MSEAnt);
 condi(i) = condicao;
+
 if (condicao < MSETarget) %se o eqm for menor que o erro admitido
     break;
 end
@@ -360,7 +361,6 @@ Wy = Wy + DWy;
 WyAnt = Ty;
 
 df= S.*(1-S); %derivada da saida do neuronio escondidos
-
 dGx = df .* (Wy' * dGy);
 dGx = dGx(2:end,:);
 DWx = mu/N* dGx*X';
